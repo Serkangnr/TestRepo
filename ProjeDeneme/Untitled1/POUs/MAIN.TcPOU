@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{a0d81122-dc44-41a3-b4f3-396835bb4bab}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbMBWriteSingleReg :FB_MBWriteSingleReg ;
+	nWriteValue : INT ;
+	fbTrigger : R_TRIG ;
+	eWriteState : (WAIT, TRIGGER, WRITE) ;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbTrigger () ;
+IF fbTrigger.Q THEN
+	IF eReadState = WAIT THEN
+		eReadState := Trigger ;
+	END_IF
+END_IF
+CASE eReadState 
+	WAIT:
+	//bişey yazılmıyor.
+	
+	TRIGGER :
+	FB_MBWriteSingleReg(
+	sIPAddr:= '127.0.0.1', 
+	nTCPPort:= 502, 
+	nUnitID:= 16#FF, 
+	nMBAddr:= , 
+	nValue:= , 
+	bExecute:= , 
+	tTimeout:= , 
+	bBusy=> , 
+	bError=> , 
+	nErrId=> );
+END_CASE
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="49" Count="0" />
+      <LineId Id="51" Count="1" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="59" Count="1" />
+      <LineId Id="62" Count="9" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="14" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

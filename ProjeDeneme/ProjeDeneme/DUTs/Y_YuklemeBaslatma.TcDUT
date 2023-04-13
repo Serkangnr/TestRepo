@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="Y_YuklemeBaslatma" Id="{ef40b6a0-fa93-4207-869d-7709ac902e93}">
+    <Declaration><![CDATA[TYPE Y_YuklemeBaslatma :
+STRUCT
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
