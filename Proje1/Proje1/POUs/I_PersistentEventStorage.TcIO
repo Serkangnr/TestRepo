@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_PersistentEventStorage" Id="{3b6e8ae5-8938-40f0-9ecd-7c4aee4851f8}">
+    <Declaration><![CDATA[INTERFACE I_PersistentEventStorage
+]]></Declaration>
+    <Method Name="StoreEvent" Id="{6c6a90bf-41ac-4da0-9780-597ca11dcc9b}">
+      <Declaration><![CDATA[METHOD StoreEvent 
+VAR_INPUT
+	stEvent : St_Event ;
+	
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

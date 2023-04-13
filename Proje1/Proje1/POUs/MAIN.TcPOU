@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{34582b17-7265-45bc-a906-db94733f1e07}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	//Test : St_Event ;
+	buton : BOOL := FALSE ;
+	
+	eEventType1 : E_EventType := E_EventType.Alarm ;
+	eEventSeverity1 : TcEventSeverity := TcEventSeverity.Error ;
+	nEventIdentiy1 : UDINT := 42 ;
+	sEventText1 : STRING (255) := 'This is a scary event' ;
+	
+	CsvPersistentEventStorage : FB_CsvPersistentEventStorage ;
+	EventLogger : FB_EventLogger(CsvPersistentEventStorage) ;
+	
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF buton THEN
+	EventLogger.AddEvent(eEventType1, eEventSeverity1, nEventIdentiy1, sEventText1);
+	buton := FALSE ;
+ 
+END_IF
+
+CsvPersistentEventStorage();
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="34" Count="1" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="39" Count="1" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="57" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

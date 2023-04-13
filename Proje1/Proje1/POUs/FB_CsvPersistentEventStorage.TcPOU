@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CsvPersistentEventStorage" Id="{7ff528b5-f284-4bd1-89ac-0b897b26279c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CsvPersistentEventStorage IMPLEMENTS I_PersistentEventStorage
+VAR
+	fbFileOpen : FB_FileOpen := (sPathName := 'C:\ Events.log' , nMode :=  FOPEN_MODEAPPEND OR FOPEN_MODETEXT ) ;
+	fbFilePuts  : FB_FilePuts ;
+	fbFileClose : Fb_FileClose ;
+	eWriteState : (FILE_OPEN_TRIGGER ,FILE_OPEN , WAIT_FOR_EVENT, WRITE_EVENT_TRIGGER, WRITE_EVENT,FILE_CLOSE_TRIGGER, FILE_CLOSE, ERROR ) ;
+	StEventWrittenToFile : St_Event ;
+	
+	CsvString : T_MaxString ;
+	FILE_CLOSE_TRIGGER :INT ;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+CASE eWriteState OF
+	
+	FILE_OPEN_TRIGGER:
+		fbFileOpen(bExecute := TRUE ) ;
+		eWriteState := FILE_OPEN ;
+		
+		
+	FILE_OPEN 		:
+		fbFileOpen(bExecute := FALSE ) ;
+		IF fbFileOpen.bError THEN
+			eWriteState := ERROR ;
+		ELSIF NOT fbFileOpen.bBusy AND fbFileOpen.hFile <> 0 THEN
+			eWriteState := WAIT_FOR_EVENT ;	
+		END_IF
+  	WAIT_FOR_EVENT 	:
+	//code yok
+	WRITE_EVENT_TRIGGER 	:
+		CsvString := CreateCsvString(stEvent := StEventWrittenToFile) ;
+		fbFilePuts(bExecute := TRUE,
+					sLine := CsvString ,
+					hFile := fbFileOpen.hFile) ;
+		eWriteState := WRITE_EVENT ;	
+		
+	WRITE_EVENT 	:
+		fbFilePuts(bExecute := FALSE);
+		IF fbFilePuts.bError THEN
+			eWriteState := ERROR ;
+		ELSIF NOT fbFilePuts.bBusy THEN
+			eWriteState := WAIT_FOR_EVENT ;
+		END_IF
+	
+	FILE_CLOSE_TRIGGER :
+		fbFileClose(bExecute := TRUE ,
+				hFile := fbFileOpen.hFile);
+		eWriteState := WRITE_EVENT ;
+	
+	FILE_CLOSE		:
+		fbFileClose(bExecute := FALSE ) ;
+		IF fbFileClose.bError THEN
+			eWriteState := ERROR ;
+		ELSIF  NOT fbFileClose.bBusy THEN
+			eWriteState := FILE_OPEN_TRIGGER ;
+		END_IF
+	ERROR :
+		//CODE YOK
+	
+	
+END_CASE]]></ST>
+    </Implementation>
+    <Method Name="CreateCsvString" Id="{0d4cdda5-417b-4e56-bd02-87377824357c}">
+      <Declaration><![CDATA[METHOD PRIVATE CreateCsvString : T_MaxString
+VAR_INPUT
+	stEvent : REFERENCE TO ST_EVENt ;
+END_VAR
+VAR
+	TempString : T_MaxString ;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TempString := TO_STRING(stEvent.eEventType) ;
+TempString := CONCAT(STR1:= TempString , STR2 := ',') ;
+TempString := CONCAT(STR1:= TempString , STR2 := TO_STRING (stEvent.eEventSeverity));
+TempString := CONCAT(STR1:= TempString , STR2 := ',') ;
+TempString := CONCAT(STR1:= TempString , STR2 := TO_STRING (stEvent.nEventIdentiy )) ;
+TempString := CONCAT(STR1:= TempString , STR2 := ',') ;
+TempString := CONCAT(STR1:= TempString , STR2 := stEvent.sEventText);
+TempString := CONCAT(STR1:= TempString , STR2 := ',') ;
+TempString := CONCAT(STR1:= TempString , STR2 := TO_STRING (stEvent.dtTimeStamp)) ;
+TempString := CONCAT(STR1:= TempString , STR2 := '$n') ;
+
+CreateCsvString := TempString ;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StoreEvent" Id="{9f1377bb-5c1f-4ceb-9d75-a0ce46d8993e}">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD StoreEvent
+VAR_INPUT
+	stEvent	: St_Event;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eWriteState = WAIT_FOR_EVENT THEN
+	eWriteState := Write_EVENT ;
+	StEventWrittenToFile := stEvent ;
+	
+	
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_CsvPersistentEventStorage">
+      <LineId Id="18" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="42" Count="1" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="47" Count="1" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="49" Count="1" />
+      <LineId Id="56" Count="1" />
+      <LineId Id="60" Count="1" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="83" Count="1" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="85" Count="2" />
+      <LineId Id="89" Count="1" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="20" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CsvPersistentEventStorage.CreateCsvString">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="12" Count="5" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="21" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CsvPersistentEventStorage.StoreEvent">
+      <LineId Id="7" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="14" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
